@@ -1,0 +1,76 @@
+username: johndeo8789
+password: L9IBihfhwJjYLtEy
+
+
+mongodb+srv://johndeo8789:L9IBihfhwJjYLtEy@quiz-cluster.hbwk1we.mongodb.net/?retryWrites=true&w=majority&appName=Quiz-Cluster
+
+connection-string:
+mongodb+srv://johndeo8789:<password>@quiz-cluster.hbwk1we.mongodb.net/
+
+
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://johndeo8789:L9IBihfhwJjYLtEy@quiz-cluster.hbwk1we.mongodb.net/?retryWrites=true&w=majority&appName=Quiz-Cluster";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+
+======================
+Fix bug;
+rename typo ------ otp -> OTP in 3 files
+
+```
+Method:POST
+http://localhost:3000/auth
+
+Request:
+ {
+     "name":"asif",
+     "email":"johndeo8789@gmail.com",
+     "password":"Aasif@999",
+     "confirmPassword":"Aasif@999"
+ }
+Status-Code:: 401 - Unauthorized
+Response:
+{
+    "status": "error",
+    "message": "email not sent",
+    "data": {}
+}
+```
+err:
+Error: getaddrinfo ENOTFOUND <SERVICE_PROVIDER>
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26) {
+  errno: -3008,
+  code: 'EDNS',
+  syscall: 'getaddrinfo',
+  hostname: '<SERVICE_PROVIDER>',
+  command: 'CONN'
+}
+401 email not sent
+
+npm run start:ts
+
+
+
+
