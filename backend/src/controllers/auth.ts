@@ -16,6 +16,8 @@ import sendEmailOTPRegister from "./otp"
 
 
 const secretKey = process.env.SECRET_KEY || "";
+
+
 const SERVER_BASE_URL = process.env.BASE_URL;
 
 //const registerUser:RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,14 +28,15 @@ const registerUser: RequestHandler = async (req, res, next) => {
     const email = req.body.email;
     const name = req.body.name;
     console.log(email,name);
-    
+    console.log(secretKey);
     // using bcrypt hash the password
     let password = await bcrypt.hash(req.body.password, 12);
 
     //create a token using email
-    const token = jwt.sign({ email: email }, secretKey);
-    // send email otp for registration
-    const sendOtp = await sendEmailOTPRegister(email);
+    const token = jwt.sign({ email: email }, secretKey);    
+    // send email otp for registration  
+    //const sendOtp = await sendEmailOTPRegister(email);
+    const sendOtp = true;
     // if email send successfull
     if (sendOtp) {
       // check user already present in User DataBase or not
@@ -75,8 +78,6 @@ const registerUser: RequestHandler = async (req, res, next) => {
       err.statusCode = 401;
       throw err;
     }
-
-
   } catch (error) {
     next(error);
   }

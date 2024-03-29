@@ -71,6 +71,15 @@ Error: getaddrinfo ENOTFOUND <SERVICE_PROVIDER>
 
 npm run start:ts
 
+{
+    "status": "success",
+    "message": "OTP has sent on your email. Please Verify",
+    "data": {
+        "email": "aasif.githu@gmail.com",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFhc2lmLmdpdGh1QGdtYWlsLmNvbSIsImlhdCI6MTcxMTY5MjI2MX0.-Zx4Rsvtxa1AXw7AET4xsc790YwbItJ8JbvHpcsO0K0"
+    }
+}
+
 
 
 

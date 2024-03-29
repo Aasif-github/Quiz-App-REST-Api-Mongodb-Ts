@@ -5,9 +5,7 @@ import ProjectError from "./error";
 
 const validateRequest: RequestHandler = (req, res, next) => {
   //validation
-  try {
-    console.log(req);
-    
+  try {    
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
       const err = new ProjectError("Validation failed!");
