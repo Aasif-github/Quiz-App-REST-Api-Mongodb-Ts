@@ -9,17 +9,17 @@ const sendEmail = async (
 ): Promise<any> => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.HOST,
-      port: 465,
-      secure: true,
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false,
       auth: {
-        user: process.env.USER,
-        pass: process.env.PASS,
+        user:"johndeo8789@gmail.com",
+        pass: "qtxe hejs gjtg spul",
       },
     });
 
     const emailSent = await transporter.sendMail({
-      from: process.env.USER,
+      from: "johndeo8789@gmail.com",
       to: email,
       subject: subject,
       text: text,
@@ -28,7 +28,7 @@ const sendEmail = async (
   } catch (error) {
     console.log(error);
     
-    const err = new ProjectError("email not sent");
+    const err = new ProjectError("email not sent---");
     err.statusCode = 401;
     throw err;
   }

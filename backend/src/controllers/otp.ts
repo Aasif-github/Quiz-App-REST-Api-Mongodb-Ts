@@ -34,6 +34,8 @@ async function sendEmailOTPRegister(email: string) {
             specialChars: false
         })
 
+        console.log('from otp',otp);
+
         const result = await OTP.findOne({ otp: otp });
         // when result find then change the otp always unique otp store in database
         while (result) {
@@ -58,8 +60,7 @@ async function sendEmailOTPRegister(email: string) {
             err.statusCode = 401;
             throw err;
         } else {
-            return true;
-           
+            return true;           
         }
     }
     catch (error) {
@@ -70,6 +71,7 @@ async function sendEmailOTPRegister(email: string) {
 export default sendEmailOTPRegister;
 
 import jwt from "jsonwebtoken";
+
 const resendRegistrationOTP: RequestHandler = async (req, res, next) => {
     try {
         let resp: ReturnResponse;

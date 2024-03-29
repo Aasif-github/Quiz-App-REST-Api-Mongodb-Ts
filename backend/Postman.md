@@ -95,3 +95,33 @@ Response:
     "data": {}
 }
 ```
+
+#
+
+Activate Account
+[activateaccount](http://localhost:3002/auth/activateaccount)
+
+{
+    "key":"",
+    "email":"aasif.github@gmail.com"
+}
+
+Response
+200 ok
+{
+    "status": "success",
+    "message": "Key Validated you have only attempt for login"
+}
+
+
+{
+    "key":"123456789",
+    "email":"aasif.github@gmail.com"
+}
+Response
+403 Forbidden
+{
+    "status": "error",
+    "message": "User is already Activated",
+    "data": {}
+}

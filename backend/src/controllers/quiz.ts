@@ -343,6 +343,7 @@ const getAllQuizTest: RequestHandler = async (req, res, next) => {
       err.statusCode = 404;
       throw err;
     }
+    // qtxe hejs gjtg spul
 
     const resp: ReturnResponse = {
       status: "success",
