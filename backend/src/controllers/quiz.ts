@@ -1,5 +1,6 @@
 //model
 import { RequestHandler } from "express";
+import * as redis from "redis";
 
 import ProjectError from "../helper/error";
 import Quiz from "../models/quiz";
@@ -32,6 +33,10 @@ const createQuiz: RequestHandler = async (req, res, next) => {
 
 const getQuiz: RequestHandler = async (req, res, next) => {
   try {
+      //set-up redis
+      const client = redis.createClient(); 
+      await client.connect();
+
     const quizId = req.params.quizId;
     let quiz;
     if (quizId) {
@@ -46,6 +51,8 @@ const getQuiz: RequestHandler = async (req, res, next) => {
         allowedUser: 1
       });
 
+      console.log('getQuiz for Quiz-id:', quiz); //single
+      
       if (!quiz) {
         const err = new ProjectError("No quiz found!");
         err.statusCode = 404;
@@ -62,7 +69,20 @@ const getQuiz: RequestHandler = async (req, res, next) => {
         throw err;
       }
     } else {
-      quiz = await Quiz.find({ createdBy: req.userId });
+      //for first time
+      console.log('SERVING FROM REDIS');
+      let quiz_redis_cache = await client.get(JSON.stringify(req.userId));
+      console.log("from redis", quiz_redis_cache);
+
+      if(!quiz_redis_cache){
+        console.log('SERVING FROM MONGODB');
+        quiz = await Quiz.find({ createdBy: req.userId });
+        // Set data in Redis cache
+        await client.set(JSON.stringify(req.userId), JSON.stringify(quiz));      
+        console.log('getQuiz-all:', quiz);  
+      }else{
+        quiz = JSON.parse(quiz_redis_cache); //DEL "\"660659e5960ccf27e7522920\""
+      }          
     }
 
     if (!quiz) {
