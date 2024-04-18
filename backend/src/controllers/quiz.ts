@@ -6,6 +6,19 @@ import ProjectError from "../helper/error";
 import Quiz from "../models/quiz";
 import { ReturnResponse } from "../utils/interfaces";
 
+const _createRedisClient = async () => {
+  
+  const client = await redis.createClient();
+  
+  client.on('error', (err) => {
+      console.error('Redis connection error:', err);
+  });
+  // Additional initialization or setup logic can go here
+  return client;
+}
+
+
+
 const createQuiz: RequestHandler = async (req, res, next) => {
   try {
     const createdBy = req.userId;
@@ -20,6 +33,8 @@ const createQuiz: RequestHandler = async (req, res, next) => {
     const allowedUser = req.body.allowedUser;
     const quiz = new Quiz({ name, category, difficultyLevel, questionList, answers, passingPercentage, createdBy, attemptsAllowedPerUser, isPublicQuiz, allowedUser });
     const result = await quiz.save();
+    console.log('quiz created..');
+    
     const resp: ReturnResponse = {
       status: "success",
       message: "Quiz created successfully",
@@ -33,12 +48,14 @@ const createQuiz: RequestHandler = async (req, res, next) => {
 
 const getQuiz: RequestHandler = async (req, res, next) => {
   try {
-      //set-up redis
-      const client = redis.createClient(); 
-      await client.connect();
+      // //set-up redis
+      // const client = redis.createClient(); 
+      // await client.connect();
 
     const quizId = req.params.quizId;
+    
     let quiz;
+    
     if (quizId) {
       quiz = await Quiz.findById(quizId, {
         name: 1,
@@ -51,13 +68,14 @@ const getQuiz: RequestHandler = async (req, res, next) => {
         allowedUser: 1
       });
 
-      console.log('getQuiz for Quiz-id:', quiz); //single
+      // console.log('getQuiz for Quiz-id:', quiz); //single
       
       if (!quiz) {
         const err = new ProjectError("No quiz found!");
         err.statusCode = 404;
         throw err;
       }
+
       if(!quiz.isPublicQuiz && !quiz.allowedUser.includes(req.userId)){
         const err = new ProjectError("You are not authorized!");
         err.statusCode = 403;
@@ -69,22 +87,57 @@ const getQuiz: RequestHandler = async (req, res, next) => {
         throw err;
       }
     } else {
+
+      const redisClient = await _createRedisClient();
+      
+      await redisClient.connect();
+      if(redisClient.isOpen){ 
+        //your code
+        console.log('connection is open');   
+      }else{
+        console.log('connection is close');   
+      }
+      
+      let redis_flag = await redisClient.get('redis_flag');
+
+      console.log('redis_flag', redis_flag);
+      
+      let quiz_redis_cache = await redisClient.get(JSON.stringify(req.userId));
+      console.log(quiz_redis_cache);
+      
+      if(quiz_redis_cache){
+        console.log('CACHE');        
+      }else{
+        console.log('DB');
+      }
       //for first time
       console.log('SERVING FROM REDIS');
-      let quiz_redis_cache = await client.get(JSON.stringify(req.userId));
-      console.log("from redis", quiz_redis_cache);
 
-      if(!quiz_redis_cache){
-        console.log('SERVING FROM MONGODB');
-        quiz = await Quiz.find({ createdBy: req.userId });
+       
+      
+
+      console.log("from redis", quiz_redis_cache);      
+      console.log('redis_flag',redis_flag);
+    
+      if(redis_flag==null){
+         if(!quiz_redis_cache){          
+            console.log('SERVING FROM MONGODB');
+            quiz = await Quiz.find({ createdBy: req.userId });
+        
+          //set redis-flag to 0 so that it will send again 1
+          await redisClient.set('redis_flag', 'not'); 
         // Set data in Redis cache
-        await client.set(JSON.stringify(req.userId), JSON.stringify(quiz));      
+        await redisClient.set(JSON.stringify(req.userId), JSON.stringify(quiz));      
+  
         console.log('getQuiz-all:', quiz);  
+     
       }else{
-        quiz = JSON.parse(quiz_redis_cache); //DEL "\"660659e5960ccf27e7522920\""
-      }          
-    }
-
+         quiz = JSON.parse(quiz_redis_cache); //DEL "\"660659e5960ccf27e7522920\""
+      }       
+    }else{
+     // quiz = JSON.parse(quiz_redis_cache); //DEL "\"660659e5960ccf27e7522920\""
+    }   
+  }
     if (!quiz) {
       const err = new ProjectError("Quiz not found!");
       err.statusCode = 404;

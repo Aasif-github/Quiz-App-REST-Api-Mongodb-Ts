@@ -23,11 +23,26 @@ const connectionString = "mongodb+srv://johndeo8789:L9IBihfhwJjYLtEy@quiz-cluste
 const port = process.env.PORT;
 const REDIS_PORT: number = 6379;
 
-const client = redis.createClient(); //added by default port 6379
+
+let redisClient;
 
 (async () => {
-  await client.connect();
-  console.log('Connected to Redis!');   
+  try {
+    redisClient = redis.createClient();
+
+    redisClient.on("error", (error) => console.error(`Redis Error : ${error}`));
+
+    // Attempt to connect to the Redis server
+    // await new Promise((resolve, reject) => {
+    //     redisClient!.on('connect', resolve);
+    //     redisClient!.on('error', reject);
+    // });
+
+    console.log("Connected to Redis server.");
+} catch (error) {
+    console.error("Error occurred while trying to connect to Redis:", error);
+    // Handle the error, such as providing alternative functionality or exiting the program gracefully
+}
 })();
 
 console.log(port);
@@ -97,6 +112,6 @@ clearBlacklistedTokenScheduler;
       console.log("Server Connected");
     });
   } catch (error) {
-    console.log(error);
+    console.log('MongoDB Err:',error);
   }
 })();

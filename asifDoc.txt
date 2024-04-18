@@ -125,5 +125,40 @@ These are just a few ideas to consider. Depending on your target audience and th
 npm i redis
 npm install @types/redis
 
+npm uninstall @type/redis
 to check-redis:
 redis-cli
+
+------------------
+
+multer
+shape
+// how to set image in postman.
+https://stackoverflow.com/questions/39660074/post-image-data-using-postman
+
+-------
+to revert all change to your last git commit.
+git checkout .
+
+Use git checkout . or git restore . to discard uncommitted changes to all files in your working directory.
+For a specific file, use git checkout <filename>.
+
+1.add redis
+what if quiz is update, it will remain send old records?
+
+2. bug fix at function 'submitExam' in Controller/exam.ts --- 405 You can't submit your own quiz!
+createdBy attribute was missing..
+
+GET /api/v1/quizzes?search={keyword}&category={category}&difficulty={difficulty}
+
+3. Pagination
+4. sorting - sort by difficulty
+5. search by quiz name
+6. added new attribute- tags - CodingQuizQuestion - history - Islamic
+
+
+ npm run start:dev 
+
+   // "redis": "^4.6.13",
+
+           // "@types/redis": "^4.0.11",

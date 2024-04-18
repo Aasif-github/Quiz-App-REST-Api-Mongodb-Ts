@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import * as redis from "redis";
 
 const schema = mongoose.Schema;
 //schema
@@ -60,6 +61,20 @@ const quizSchema = new schema(
   },
   { timestamps: true }
 );
+
+quizSchema.pre('save', async function (next){
+  console.log('running before save');
+  
+  next()
+});
+
+quizSchema.post('save', async function (){
+  
+  const client = redis.createClient(); 
+  await client.connect();
+  
+  await client.set('redis_flag', 'updated');   
+});
 
 const Quiz = mongoose.model("Quiz", quizSchema);
 
